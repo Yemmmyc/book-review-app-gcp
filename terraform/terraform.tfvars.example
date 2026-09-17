@@ -1,0 +1,18 @@
+# Example variable configuration (non-sensitive)
+# Copy this file to terraform.tfvars and update values for your environment.
+
+project_id       = "YOUR_GCP_PROJECT_ID"
+region           = "us-central1"
+environment      = "dev"
+
+db_name          = "book_review_db"
+db_user          = "pravin"
+
+enable_cloud_run = false
+
+backend_image = "us-central1-docker.pkg.dev/YOUR_GCP_PROJECT_ID/book-review-repo/book-review-backend:v1"
+
+frontend_image = "us-central1-docker.pkg.dev/YOUR_GCP_PROJECT_ID/book-review-repo/book-review-frontend:v4"
+
+# Set this to the URL of your deployed frontend when Cloud Run is enabled.
+allowed_origins = "https://YOUR_FRONTEND_CLOUD_RUN_URL"

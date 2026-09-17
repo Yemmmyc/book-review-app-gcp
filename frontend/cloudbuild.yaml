@@ -1,0 +1,11 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_API_URL=https://book-review-backend-ppi2n4v6bq-uc.a.run.app'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/devops-portfolio-499605/book-review-repo/book-review-frontend:v4'
+      - '.'
+images:
+  - 'us-central1-docker.pkg.dev/devops-portfolio-499605/book-review-repo/book-review-frontend:v4'
