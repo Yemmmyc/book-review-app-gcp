@@ -49,7 +49,8 @@ steps:
         terraform init
         terraform apply -auto-approve \
           -var="backend_image=us-central1-docker.pkg.dev/$PROJECT_ID/book-review-repo/book-review-backend:$SHORT_SHA" \
-          -var="frontend_image=us-central1-docker.pkg.dev/$PROJECT_ID/book-review-repo/book-review-frontend:$SHORT_SHA"
+          -var="frontend_image=us-central1-docker.pkg.dev/$PROJECT_ID/book-review-repo/book-review-frontend:$SHORT_SHA" \
+          -var="allowed_origins=https://book-review-frontend-90865511458.us-central1.run.app"
 
 images:
   - 'us-central1-docker.pkg.dev/$PROJECT_ID/book-review-repo/book-review-backend:$SHORT_SHA'
