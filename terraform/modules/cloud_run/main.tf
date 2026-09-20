@@ -89,11 +89,6 @@ resource "google_cloud_run_v2_service" "frontend" {
       ports {
         container_port = 3000
       }
-
-      env {
-        name  = "NEXT_PUBLIC_API_URL"
-        value = google_cloud_run_v2_service.backend.uri
-      }
     }
   }
 }
