@@ -1,0 +1,59 @@
+steps:
+  # 1. Run backend unit tests
+  - name: 'node:18'
+    dir: 'backend'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        npm ci
+        npm test
+
+  # 2. Build backend image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/book-review-repo/book-review-backend:$SHORT_SHA'
+      - './backend'
+
+  # 3. Build frontend image with the live backend URL
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_API_URL=https://book-review-backend-90865511458.us-central1.run.app'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/book-review-repo/book-review-frontend:$SHORT_SHA'
+      - './frontend'
+
+  # 4. Push backend image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/book-review-repo/book-review-backend:$SHORT_SHA'
+
+  # 5. Push frontend image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/book-review-repo/book-review-frontend:$SHORT_SHA'
+
+  # 6. Deploy through Terraform using shared GCS state
+  - name: 'hashicorp/terraform:1.16.2'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        cd terraform
+        terraform init
+        terraform apply -auto-approve \
+          -var="backend_image=us-central1-docker.pkg.dev/$PROJECT_ID/book-review-repo/book-review-backend:$SHORT_SHA" \
+          -var="frontend_image=us-central1-docker.pkg.dev/$PROJECT_ID/book-review-repo/book-review-frontend:$SHORT_SHA"
+
+images:
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/book-review-repo/book-review-backend:$SHORT_SHA'
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/book-review-repo/book-review-frontend:$SHORT_SHA'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
