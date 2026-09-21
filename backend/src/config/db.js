@@ -3,7 +3,11 @@ require("dotenv").config();
 
 const useSSL = process.env.DB_SSL === "true";
 
-const dialectOptions = {};
+const dialectOptions = {
+  family: 4,
+  connectTimeout: 10000,
+};
+
 if (useSSL) {
   dialectOptions.ssl = {
     require: true,
